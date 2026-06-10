@@ -24,6 +24,8 @@ export const userNav: NavItem[] = [
 export const adminNav: NavItem[] = [
   { to: '/admin', labelKey: 'overview', icon: LayoutDashboard },
   { to: '/admin/users', labelKey: 'users', icon: Users },
+  { to: '/admin/transactions', labelKey: 'adminTransactions', icon: ArrowLeftRight },
+  { to: '/admin/logs', labelKey: 'auditLogs', icon: FileCheck2 },
   { to: '/admin/kyc', labelKey: 'kycReview', icon: FileCheck2 },
   { to: '/admin/loans', labelKey: 'loanManagement', icon: Landmark },
   { to: '/admin/fraud', labelKey: 'fraudAlerts', icon: AlertTriangle },
