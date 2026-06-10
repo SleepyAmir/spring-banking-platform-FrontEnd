@@ -350,4 +350,9 @@ export const adminApi = {
         const res = await apiClient.get<ApiResponse<User[]>>('/api/users');
         return unwrap(res);
     },
+    async toggleStatus(id: number, enabled: boolean): Promise<User> {
+        if (isMock()) { await sleep(300); return mock.mockAdminUsers.find(u => u.id === id)!; }
+        const res = await apiClient.post<ApiResponse<User>>(`/api/users/${id}/status?enabled=${enabled}`);
+        return unwrap(res);
+    }
 };
