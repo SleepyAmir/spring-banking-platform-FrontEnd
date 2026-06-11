@@ -7,56 +7,56 @@ import { apiClient } from '@/api/client';
 
 export default function AdminLogs() {
     const { t, lang } = useI18n();
-    const [logs, setLogs] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [username, setUsername] = useState('');
-    const [action, setAction] = useState('');
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [action, setAction] = useState('');
 
-    const fetchLogs = async () => {
-        setLoading(true);
-        try {
-            let url = '/api/audit/search?size=100';
-            if (username) url += `&username=${username}`;
-            if (action) url += `&action=${action}`;
+  const fetchLogs = async () => {
+    setLoading(true);
+    try {
+      let url = '/api/audit/search?size=100';
+      if (username) url += `&username=${username}`;
+      if (action) url += `&action=${action}`;
+      
+      const res = await apiClient.get<any>(url);
+      setLogs(res.data?.data?.content || []);
+    } catch (e) {
+      console.error(e);
+      // fallback mock
+      setLogs([{ id: 1, actorUsername: 'test', action: 'LOGIN', timestamp: new Date().toISOString() }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const res = await apiClient.get<any>(url);
-            setLogs(res.data?.data?.content || []);
-        } catch (e) {
-            console.error(e);
-            // fallback mock
-            setLogs([{ id: 1, actorUsername: 'test', action: 'LOGIN', timestamp: new Date().toISOString() }]);
-        } finally {
-            setLoading(false);
-        }
-    };
+  useEffect(() => {
+    fetchLogs();
+  }, []);
 
-    useEffect(() => {
-        fetchLogs();
-    }, []);
+  const handleExport = async () => {
+    try {
+      let url = '/api/audit/export?';
+      if (username) url += `username=${username}&`;
+      if (action) url += `action=${action}&`;
+      
+      const res = await apiClient.get(url, { responseType: 'blob' });
+      const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `AuditLogs_${new Date().toISOString()}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (e) {
+      console.error('Export failed', e);
+    }
+  };
 
-    const handleExport = async () => {
-        try {
-            let url = '/api/audit/export?';
-            if (username) url += `username=${username}&`;
-            if (action) url += `action=${action}&`;
-
-            const res = await apiClient.get(url, { responseType: 'blob' });
-            const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = `AuditLogs_${new Date().toISOString()}.xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        } catch (e) {
-            console.error('Export failed', e);
-        }
-    };
-
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-slate-800">{t('auditLogs')}</h1>
                 <button onClick={handleExport} className="btn flex items-center gap-2 border border-slate-600 px-3 py-1.5 rounded text-sm hover:bg-slate-700">
                     <Download className="w-4 h-4" />
@@ -100,7 +100,7 @@ export default function AdminLogs() {
                     ]}
                     loading={loading}
                 />
-            </Card>
-        </div>
-    );
+      </Card>
+    </div>
+  );
 }

@@ -7,54 +7,54 @@ import { apiClient } from '@/api/client';
 
 export default function AdminTransactions() {
     const { t, lang } = useI18n();
-    const [txs, setTxs] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [accountId, setAccountId] = useState('');
-    const [status, setStatus] = useState('');
+  const [txs, setTxs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [accountId, setAccountId] = useState('');
+  const [status, setStatus] = useState('');
 
-    const fetchTxs = async () => {
-        setLoading(true);
-        try {
-            let url = '/api/transactions/search?size=100';
-            if (accountId) url += `&accountId=${accountId}`;
-            if (status) url += `&status=${status}`;
+  const fetchTxs = async () => {
+    setLoading(true);
+    try {
+      let url = '/api/transactions/search?size=100';
+      if (accountId) url += `&accountId=${accountId}`;
+      if (status) url += `&status=${status}`;
+      
+      const res = await apiClient.get<any>(url);
+      setTxs(res.data?.data?.content || []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const res = await apiClient.get<any>(url);
-            setTxs(res.data?.data?.content || []);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    };
+  useEffect(() => {
+    fetchTxs();
+  }, []);
 
-    useEffect(() => {
-        fetchTxs();
-    }, []);
+  const handleExport = async () => {
+    try {
+      let url = '/api/transactions/export?';
+      if (accountId) url += `accountId=${accountId}&`;
+      if (status) url += `status=${status}&`;
+      
+      const res = await apiClient.get(url, { responseType: 'blob' });
+      const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `Transactions_${new Date().toISOString()}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (e) {
+      console.error('Export failed', e);
+    }
+  };
 
-    const handleExport = async () => {
-        try {
-            let url = '/api/transactions/export?';
-            if (accountId) url += `accountId=${accountId}&`;
-            if (status) url += `status=${status}&`;
-
-            const res = await apiClient.get(url, { responseType: 'blob' });
-            const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = `Transactions_${new Date().toISOString()}.xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        } catch (e) {
-            console.error('Export failed', e);
-        }
-    };
-
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-slate-800">{t('adminTransactions')}</h1>
                 <button onClick={handleExport} className="btn flex items-center gap-2 border border-slate-600 px-3 py-1.5 rounded text-sm hover:bg-slate-700">
                     <Download className="w-4 h-4" />
@@ -102,7 +102,7 @@ export default function AdminTransactions() {
                     ]}
                     loading={loading}
                 />
-            </Card>
-        </div>
-    );
+      </Card>
+    </div>
+  );
 }

@@ -3,7 +3,39 @@
 @tailwind utilities;
 
 :root {
+  /* Tailwind Default Slate Palette (Dark Mode Base) */
+  --c-slate-50: 248 250 252;
+  --c-slate-100: 241 245 249;
+  --c-slate-200: 226 232 240;
+  --c-slate-300: 203 213 225;
+  --c-slate-400: 148 163 184;
+  --c-slate-500: 100 116 139;
+  --c-slate-600: 71 85 105;
+  --c-slate-700: 51 65 85;
+  --c-slate-800: 30 41 59;
+  --c-slate-900: 15 23 42;
+  --c-slate-950: 2 6 23;
+  --c-white: 255 255 255;
+  --c-black: 0 0 0;
   color-scheme: dark;
+}
+
+html.light-mode {
+  /* Light Mode Palette Swap (Professional Clean Look) */
+  --c-slate-950: 248 250 252; /* background -> slate-50 */
+  --c-slate-900: 255 255 255; /* cards -> white */
+  --c-slate-800: 241 245 249; /* inputs/hover -> slate-100 */
+  --c-slate-700: 226 232 240; /* borders -> slate-200 */
+  --c-slate-600: 203 213 225; /* borders strong -> slate-300 */
+  --c-slate-500: 100 116 139; /* muted icons -> slate-500 */
+  --c-slate-400: 71 85 105;   /* muted text -> slate-600 */
+  --c-slate-300: 51 65 85;    /* secondary text -> slate-700 */
+  --c-slate-200: 30 41 59;    /* text -> slate-800 */
+  --c-slate-100: 15 23 42;    /* headings -> slate-900 */
+  --c-slate-50: 2 6 23;       /* deepest */
+  --c-white: 15 23 42;        /* text-white -> dark text, bg-white/10 -> soft dark shadow */
+  --c-black: 255 255 255;
+  color-scheme: light;
 }
 
 html,
@@ -13,11 +45,11 @@ body,
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  @apply bg-slate-950 text-slate-100 antialiased transition-colors duration-500;
   font-family: 'Vazirmatn', 'Inter', system-ui, sans-serif;
   background-image:
-    radial-gradient(1200px 600px at 100% -10%, rgba(48, 170, 90, 0.16), transparent),
-    radial-gradient(900px 500px at -10% 110%, rgba(130, 219, 96, 0.10), transparent);
+    radial-gradient(1200px 600px at 100% -10%, rgba(48, 170, 90, 0.12), transparent),
+    radial-gradient(900px 500px at -10% 110%, rgba(130, 219, 96, 0.08), transparent);
   background-attachment: fixed;
 }
 
@@ -27,7 +59,7 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-700 rounded-full;
+  @apply bg-slate-700 rounded-full border-2 border-slate-950;
 }
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-600;
@@ -38,30 +70,30 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-soft;
+    @apply rounded-2xl border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-soft transition-colors duration-500;
   }
   .input {
     @apply w-full rounded-xl border border-white/10 bg-slate-800/60 px-4 py-2.5 text-sm outline-none
-           transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 placeholder:text-slate-500;
+           transition-all duration-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 placeholder:text-slate-500;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium
            transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply btn bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-glow hover:from-brand-400 hover:to-brand-600;
+    @apply btn bg-gradient-to-br from-brand-500 to-brand-700 text-[#fff] shadow-glow hover:from-brand-400 hover:to-brand-600;
   }
   .btn-ghost {
     @apply btn bg-white/5 text-slate-200 hover:bg-white/10 border border-white/10;
   }
   .btn-danger {
-    @apply btn bg-rose-600/90 text-white hover:bg-rose-600;
+    @apply btn bg-rose-600/90 text-[#fff] hover:bg-rose-600;
   }
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
   .label {
-    @apply mb-1.5 block text-sm font-medium text-slate-300;
+    @apply mb-1.5 block text-sm font-medium text-slate-300 transition-colors duration-500;
   }
 }
 
