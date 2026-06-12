@@ -57,6 +57,7 @@ export interface Transaction {
   id?: number;
   trackingCode: string;
   amount: number;
+  fee?: number;
   currency?: string;
   type: string;
   status: string;
@@ -102,6 +103,10 @@ export interface KycVerification {
   username?: string;
   status: 'PENDING' | 'DOCUMENT_UPLOADED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED';
   level: 'BASIC' | 'STANDARD' | 'ENHANCED';
+  nationalCode?: string;
+  birthDate?: string;
+  address?: string;
+  postalCode?: string;
   rejectionReason?: string;
   verifiedBy?: string;
   dailyTransferLimit?: number;

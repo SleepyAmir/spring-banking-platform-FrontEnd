@@ -7,6 +7,7 @@ import { useFetch } from '@/hooks/useFetch';
 import { accountApi, txApi } from '@/api/services';
 import { extractError } from '@/api/client';
 import { formatMoney } from '@/lib/utils';
+import { numberToWords } from '@/lib/persianNumber';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Spinner } from '@/components/ui/Spinner';
 import { PageHeader } from '@/components/PageHeader';
@@ -50,7 +51,8 @@ export default function TransferPage() {
                 }
 
                 if (Number(fromId) === to) { toast(lang === 'fa' ? 'حساب مبدأ و مقصد نباید یکسان باشند' : 'Source and destination must differ', 'error'); setLoading(false); return; }
-                const res = await txApi.create({ type: 'TRANSFER', amount: amt, fromAccountId: Number(fromId), toAccountId: to, userId: uid });
+                const fee = 600; // کارمزد ثابت ۶۰۰ ریالی بانکی (یا می‌تونه فرمولی باشه)
+                const res = await txApi.create({ type: 'TRANSFER', amount: amt, fee: fee, fromAccountId: Number(fromId), toAccountId: to, userId: uid });
                 setLastTracking(res.trackingCode);
                 setToExternal('');
                 setToId('');
@@ -124,6 +126,11 @@ export default function TransferPage() {
                         <div>
                             <label className="label">{t('amount')}</label>
                             <input className="input" type="number" min="1" value={amount} onChange={(e) => setAmount(e.target.value)} required placeholder="1000000" />
+                            {amount && !isNaN(Number(amount)) && lang === 'fa' && (
+                                <p className="mt-2 text-xs font-medium text-emerald-400">
+                                    {numberToWords(Math.floor(Number(amount) / 10))} <span className="text-slate-500">تومان</span>
+                                </p>
+                            )}
                         </div>
 
                         <button type="submit" disabled={loading} className="btn-primary w-full">

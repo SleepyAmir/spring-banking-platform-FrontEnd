@@ -150,7 +150,7 @@ export const cardApi = {
 
 export const txApi = {
     async create(payload: {
-        type: string; amount: number; fromAccountId?: number | null; toAccountId?: number | null;
+        type: string; amount: number; fee?: number; fromAccountId?: number | null; toAccountId?: number | null;
         userId: number; spendingCategory?: string; description?: string;
     }): Promise<Transaction> {
         if (isMock()) {
@@ -266,12 +266,19 @@ export const kycApi = {
         const res = await apiClient.get<ApiResponse<KycVerification[]>>(`/api/kyc${status ? `?status=${status}` : ''}`);
         return unwrap(res);
     },
-    async uploadDocuments(userId: number, files: { nationalId: File; selfie: File }, level?: string) {
+    async uploadDocuments(userId: number, data: { nationalId: File; selfie: File, nationalCode?: string, birthDate?: string, address?: string, postalCode?: string }, level?: string) {
         if (isMock()) { await sleep(800); return { ...mock.mockKyc[0], userId, status: 'DOCUMENT_UPLOADED' } as KycVerification; }
         const form = new FormData();
-        form.append('nationalId', files.nationalId);
-        form.append('selfie', files.selfie);
-        const url = `/api/kyc/${userId}/documents${level ? `?level=${level}` : ''}`;
+        form.append('nationalId', data.nationalId);
+        form.append('selfie', data.selfie);
+        
+        let url = `/api/kyc/${userId}/documents?`;
+        if (level) url += `level=${level}&`;
+        if (data.nationalCode) url += `nationalCode=${encodeURIComponent(data.nationalCode)}&`;
+        if (data.birthDate) url += `birthDate=${encodeURIComponent(data.birthDate)}&`;
+        if (data.address) url += `address=${encodeURIComponent(data.address)}&`;
+        if (data.postalCode) url += `postalCode=${encodeURIComponent(data.postalCode)}&`;
+        
         const res = await apiClient.post<ApiResponse<KycVerification>>(url, form, { headers: { 'Content-Type': 'multipart/form-data' } });
         return unwrap(res);
     },

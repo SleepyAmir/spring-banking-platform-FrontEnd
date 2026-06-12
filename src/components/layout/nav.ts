@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Wallet, CreditCard, ArrowLeftRight, Landmark,
-  Bell, ShieldCheck, Users, FileCheck2, AlertTriangle, ShieldAlert, Ban,
+  Bell, ShieldCheck, Users, FileCheck2, AlertTriangle, ShieldAlert, Ban, UserCircle
 } from 'lucide-react';
 import type { TranslationKey } from '@/i18n/translations';
 
@@ -19,6 +19,7 @@ export const userNav: NavItem[] = [
   { to: '/app/loans', labelKey: 'loans', icon: Landmark },
   { to: '/app/kyc', labelKey: 'kyc', icon: ShieldCheck },
   { to: '/app/notifications', labelKey: 'notifications', icon: Bell },
+  { to: '/app/profile', labelKey: 'profile', icon: UserCircle },
 ];
 
 export const adminNav: NavItem[] = [
